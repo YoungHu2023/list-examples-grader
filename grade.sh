@@ -1,4 +1,4 @@
-CPATH='.:lib/hamcrest-core-1.3.jar:lib/junit-4.13.2.jar'
+CPATH='..;../lib/hamcrest-core-1.3.jar;../lib/junit-4.13.2.jar'
 
 rm -rf student-submission
 rm -rf grading-area
@@ -21,7 +21,8 @@ cp TestListExamples.java grading-area/
 
 cd grading-area
 javac -cp $CPATH TestListExamples.java ListExamples.java
-if [ $? -ne 0 ]; then
+if [ $? -ne 0 ]; 
+then
     echo "Error: Compilation failed."
     exit 1
 fi
@@ -29,9 +30,10 @@ fi
 echo "No Error: Compilation successful."
 
 
-java -cp $CPATH org.junit.runner.JUnitCore TestListExamples  
-lastline=$(cat grading-area/junit-output.txt | tail -n 2 | head -n 1)
-tests=$(echo $lastline | awk -F '[, ]' '{print $6}')
+java -cp $CPATH org.junit.runner.JUnitCore TestListExamples > junit-output.txt
+lastline=$(cat grading-area/junit-output.txt | grep "Tests run:")
+tests=$(echo $lastline | grep 'Tests run: [0-9]*' | awk '{print $NF}')
+failures=$(echo $lastline | grep 'Failures: [0-9]*' | awk '{print $NF}')
 successes=$((tests - failures))
 
 echo "Your score is $successes / $tests"
