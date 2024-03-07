@@ -1,4 +1,4 @@
-CPATH='..;../lib/hamcrest-core-1.3.jar;../lib/junit-4.13.2.jar'
+CPATH='.;./lib/hamcrest-core-1.3.jar;./lib/junit-4.13.2.jar'
 
 rm -rf student-submission
 rm -rf grading-area
@@ -37,5 +37,10 @@ tests=$(echo $lastline | grep -o -E 'Tests run: [0-9]+' | awk '{print $NF}')
 failures=$(echo $lastline | grep -o -E 'Failures: [0-9]+' | awk '{print $NF}')
 successes=$((tests - failures))
 
-echo $lastline
-echo "Your score is $successes / $tests"
+if [[ -z "$lastline" ]]
+then
+    echo "you got full score!"
+else
+    echo $lastline
+    echo "Your score is $successes / $tests"
+fi
