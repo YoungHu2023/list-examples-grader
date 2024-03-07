@@ -8,9 +8,30 @@ mkdir grading-area
 git clone $1 student-submission
 echo 'Finished cloning'
 
+if [ ! -f "student-submission/ListExamples.java" ]; then
+    echo "Error: ListExamples.java not found in the student submission."
+    exit 1
+fi
 
-# Draw a picture/take notes on the directory structure that's set up after
-# getting to this point
+echo "No Error: ListExamples.java found in the student submission."
 
-# Then, add here code to compile and run, and do any post-processing of the
-# tests
+cp -r lib grading-area/
+cp student-submission/ListExamples.java grading-area/
+cp TestListExamples.java grading-area/
+
+cd grading-area
+javac -cp $CPATH TestListExamples.java ListExamples.java
+if [ $? -ne 0 ]; then
+    echo "Error: Compilation failed."
+    exit 1
+fi
+
+echo "No Error: Compilation successful."
+
+
+java -cp $CPATH org.junit.runner.JUnitCore TestListExamples  
+lastline=$(cat grading-area/junit-output.txt | tail -n 2 | head -n 1)
+tests=$(echo $lastline | awk -F '[, ]' '{print $6}')
+successes=$((tests - failures))
+
+echo "Your score is $successes / $tests"
